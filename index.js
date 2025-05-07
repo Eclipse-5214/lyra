@@ -1,13 +1,9 @@
 //https://i.imgur.com/C9iH7yb.png
-import { scheduleTask } from "../../core/CustomRegisters";
-import { Event } from "../../core/Event";
-import EventEnums from "../../core/EventEnums";
-import Feature from "../../core/Feature";
-import { RenderHelper } from "../../shared/Render";
+import renderBoxFilled from "../Apelles/index.js";
+import settings from "./config.js";
+import { FeatManager } from "./helpers";
 
 const mobs = new HashMap();
-
-let useSeverTicks = false;
 
 const scanEntityName = (mcEntity, entityId, feat) => {
     const name = mcEntity./* getName */ func_70005_c_();
@@ -33,29 +29,15 @@ const scanEntityName = (mcEntity, entityId, feat) => {
     feat.update();
 };
 
-const feat = new Feature("boxStarMobs", "catacombs")
-    .addEvent(
-        new Event(
-            EventEnums.PACKET.SERVER.SCOREBOARD,
-            () => {
-                useSeverTicks = true;
-            },
-            /^Time Elapsed\: 03s$/
-        )
-    )
-    .addEvent(
-        new Event(EventEnums.FORGE.ENTITYJOIN, (mcEntity, entityId) => {
-            // Scan with client ticks if the server packets aren't able to arrive yet
-            if (!useSeverTicks) {
-                Client.scheduleTask(3, () => scanEntityName(mcEntity, entityId, feat));
-                return;
-            }
+const boxStarredMobs = FeatManager.createFeature("highlightMob", "catacombs");
 
-            scheduleTask(() => scanEntityName(mcEntity, entityId, feat));
-        })
-    )
-    .addSubEvent(
-        new Event("renderEntity", (entity, _, pticks) => {
+boxStarredMobs
+    .register("lyra:entityJoin", (mcEntity, entityId) => {
+        Client.scheduleTask(3, () => scanEntityName(mcEntity, entityId, boxStarredMobs));
+    })
+    .registersub(
+        "renderEntity",
+        (entity) => {
             const entityId = entity.entity./* getEntityId */ func_145782_y();
             const data = mobs.get(entityId);
             if (!data) return;
@@ -63,11 +45,27 @@ const feat = new Feature("boxStarMobs", "catacombs")
 
             const [width, height, r, g, b, a] = data;
 
-            RenderHelper.drawEntityBox(entity.getX(), entity.getY(), entity.getZ(), width, height, r, g, b, a, 2, false, true, pticks);
-        }),
-        () => mobs.size()
+            renderBoxFilled([255, 255, 255], entity.getX(), entity.getY(), entity.getZ(), width, height, { chroma: 1, smooth: true });
+        },
+        () => {
+            mobs.size();
+        }
     )
     .onUnregister(() => {
         mobs.clear();
-        useSeverTicks = false;
     });
+
+register("command", (...args) => {
+    if (args[0] === "help") {
+        ChatLib.chat("&8&m-------------------------------------------------");
+        ChatLib.chat("&6/lyra &7main command! Aliases: &6/ly /lyr");
+        ChatLib.chat("&6/ly help &7Opens the Lyra help menu!");
+        ChatLib.chat("&8&m-------------------------------------------------");
+    } else if (!args || !args.length || !args[0]) {
+        return settings().getConfig().openGui();
+    } else {
+        ChatLib.chat("&cUnknown command. &7Try &6/ly help &7for a list of commands");
+    }
+})
+    .setName("lyra")
+    .setAliases("ly", "lyr");
