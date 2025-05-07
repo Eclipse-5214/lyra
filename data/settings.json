@@ -1,0 +1,44 @@
+[
+    {
+        "category": "General",
+        "settings": [
+            {
+                "type": 9,
+                "name": "Info"
+            },
+            {
+                "type": 2,
+                "name": "MyDiscord"
+            },
+            {
+                "type": 2,
+                "name": "MyGithub"
+            },
+            {
+                "type": 6,
+                "name": "highlightMob",
+                "value": true
+            },
+            {
+                "type": 7,
+                "name": "highlightMobType",
+                "value": 0
+            },
+            {
+                "type": 5,
+                "name": "highlightColor",
+                "value": [
+                    0,
+                    255,
+                    255,
+                    255
+                ]
+            },
+            {
+                "type": 6,
+                "name": "mobChroma",
+                "value": false
+            }
+        ]
+    }
+]

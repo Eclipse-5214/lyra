@@ -1,5 +1,5 @@
-import Settings from "../../Amaterasu/core/Settings";
-import DefaultConfig from "../../Amaterasu/core/DefaultConfig";
+import Settings from "../Amaterasu/core/Settings";
+import DefaultConfig from "../Amaterasu/core/DefaultConfig";
 
 /*  ------------------- Config ------------------
 
@@ -17,14 +17,14 @@ import DefaultConfig from "../../Amaterasu/core/DefaultConfig";
 export const roomName = new Gui();
 
 //config
-const defaultConf = new DefaultConfig("stella", "data/settings.json")
+const defaultConf = new DefaultConfig("lyra", "data/settings.json")
 
     //general
     .addTextParagraph({
         category: "General",
         configName: "Info",
-        title: `&6&l&dStella`,
-        description: "&bMade by NEXD_",
+        title: `&6&l&bLyra`,
+        description: "&dMade by NEXD_",
         centered: true,
         subcategory: "",
     })
@@ -59,46 +59,38 @@ const defaultConf = new DefaultConfig("stella", "data/settings.json")
     .addSwitch({
         category: "General",
         configName: "highlightMob",
-        title: "Highlight Dungeon trash",
-        description: "Highlights dungeon trash in your inventory",
-        subcategory: "General",
+        title: "Highlight Starred Mobs",
+        description: "Highlight starred mobs in dungeons",
+        subcategory: "Dungeons",
     })
 
     .addDropDown({
-        configName: "termNumber",
-        title: "Number",
-        description: "What terminal number you want to call",
-        category: "Dungeons",
-        subcategory: "Terminals",
-        options: ["1", "2", "3", "4", "All"],
-        value: 4,
-
-        shouldShow(data) {
-            return data.termNumbers;
-        },
+        configName: "highlightMobType",
+        title: "Highlight Type",
+        description: "What type of highlight you want to use",
+        category: "General",
+        subcategory: "Dungeons",
+        options: ["Box", "Outline", "Fill"],
+        value: 0,
     })
 
     .addColorPicker({
         configName: "highlightColor",
         title: "Highlight Color",
-        description: "The color to highlight trash",
-        category: "Dungeons",
-        subcategory: "General",
+        description: "The color to highlight starred mobs",
+        category: "General",
+        subcategory: "Dungeons",
         value: [0, 255, 255, 255],
-
-        shouldShow(data) {
-            return data.highlightTrash;
-        },
     })
 
     .addSwitch({
         category: "General",
         configName: "mobChroma",
-        title: "Highlight Dungeon trash",
-        description: "Highlights dungeon trash in your inventory",
-        subcategory: "General",
+        title: "Chroma",
+        description: "Make the highlight color chroma",
+        subcategory: "Dungeons",
     });
 
-const config = new Settings("stella", defaultConf, "data/ColorScheme.json");
+const config = new Settings("lyra", defaultConf, "data/ColorScheme.json");
 
 export default () => config.settings;

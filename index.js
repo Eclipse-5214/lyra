@@ -1,11 +1,18 @@
 //https://i.imgur.com/C9iH7yb.png
-import renderBoxFilled from "../Apelles/index.js";
+
+//import { scheduleTask } from "../tska/shared/ServerTick";
+import { renderBoxOutline, createManualOutliner, createPassthroughOutlineTester, createPerEntityOutliner } from "../Apelles/index.js";
 import settings from "./config.js";
 import { FeatManager } from "./helpers";
 
+const outliner = createManualOutliner([255, 255, 255, 255], 6, { chroma: true });
+outliner.register();
+
 const mobs = new HashMap();
 
-const scanEntityName = (mcEntity, entityId, feat) => {
+const boxStarredMobs = FeatManager.createFeature("highlightMob", "catacombs");
+
+const scanEntityName = (mcEntity, entityId) => {
     const name = mcEntity./* getName */ func_70005_c_();
     if (!name.includes("✯ ")) return;
 
@@ -14,7 +21,7 @@ const scanEntityName = (mcEntity, entityId, feat) => {
     if (!entityBelow) return;
     if (entityBelow instanceof net.minecraft.entity.monster.EntityEnderman) {
         mobs.put(entityBelowId, [/* width */ 0.6, /* height */ 0.7, /* red */ 255, /* green */ 51, /* blue */ 255, /* alpha */ 255]);
-        feat.update();
+        boxStarredMobs.update();
         return;
     }
 
@@ -26,34 +33,36 @@ const scanEntityName = (mcEntity, entityId, feat) => {
         /* blue */ 255,
         /* alpha */ 255,
     ]);
-    feat.update();
+    boxStarredMobs.update();
 };
-
-const boxStarredMobs = FeatManager.createFeature("highlightMob", "catacombs");
 
 boxStarredMobs
     .register("lyra:entityJoin", (mcEntity, entityId) => {
+        //scheduleTask(() => scanEntityName(mcEntity, entityId, boxStarredMobs), 3);
         Client.scheduleTask(3, () => scanEntityName(mcEntity, entityId, boxStarredMobs));
     })
     .registersub(
-        "renderEntity",
-        (entity) => {
+        "lyra:renderEntity",
+        (entity, _, pticks) => {
             const entityId = entity.entity./* getEntityId */ func_145782_y();
             const data = mobs.get(entityId);
             if (!data) return;
             if (entity.isDead()) return mobs.remove(entityId);
 
             const [width, height, r, g, b, a] = data;
+            if (settings().mobChroma) [r, g, b, a] = [255, 255, 255, 255];
 
-            renderBoxFilled([255, 255, 255], entity.getX(), entity.getY(), entity.getZ(), width, height, { chroma: 1, smooth: true });
+            //renderBoxOutline([r, g, b, a], entity.getX(), entity.getY(), entity.getZ(), width, height, { smooth: true });
         },
         () => {
-            mobs.size();
+            return mobs.size() != 0 ? true : false;
         }
     )
     .onUnregister(() => {
         mobs.clear();
     });
+
+register("command", () => World.getAllEntities().forEach((v) => outliner.add(v.entity))).setName("outlineall");
 
 register("command", (...args) => {
     if (args[0] === "help") {
