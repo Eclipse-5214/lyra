@@ -1,0 +1,8 @@
+{
+    "name": "lyra",
+    "creator": "NEXD_",
+    "description": "A fun dungeon star mob highlighter",
+    "version": "1.0.0",
+    "entry": "index.js",
+    "requires": ["Apelles", "tska"]
+}
