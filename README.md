@@ -16,7 +16,7 @@
   </a>
 </p>
 
-<p align="center" id="description"><em>Stella</em> is a verry work in progress Skyblock Quality-of-Life (QoL) mod for ChatTriggers</p>
+<p align="center" id="description"><em>Lyra</em> is a verry work in progress Skyblock Quality-of-Life (QoL) mod for ChatTriggers</p>
 
 ---
 
