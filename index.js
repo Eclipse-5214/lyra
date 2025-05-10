@@ -1,7 +1,7 @@
 //https://i.imgur.com/C9iH7yb.png
 
 //import { scheduleTask } from "../tska/shared/ServerTick";
-import { renderBoxOutline, createManualOutliner, createPassthroughOutlineTester, createPerEntityOutliner } from "../Apelles/index.js";
+import { renderBoxOutline, createManualOutliner } from "../Apelles/index.js";
 import settings from "./config.js";
 import { FeatManager } from "./helpers";
 
